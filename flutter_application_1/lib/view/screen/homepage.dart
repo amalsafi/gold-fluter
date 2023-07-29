@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/view/screen/signin.dart';
 import 'package:flutter_application_1/view/screen/signup.dart';
+import 'package:flutter_application_1/view/screen/signup1.dart';
 import 'package:flutter_application_1/view/widget/mybutton.dart';
 
 class Homepage extends StatelessWidget {
@@ -23,11 +24,11 @@ class Homepage extends StatelessWidget {
                 height: 57,
                 child: OutlinedButton(
                   onPressed: () {
-                    // Navigator.of(context).push(
-                    //   MaterialPageRoute(
-                    //     builder: (context) => Signup(),
-                    //   ),
-                    // );
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => SignupPage(),
+                      ),
+                    );
                   },
                   style: OutlinedButton.styleFrom(
                       elevation: 3,

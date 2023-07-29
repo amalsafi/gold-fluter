@@ -5,6 +5,7 @@ import 'package:flutter_application_1/view/screen/Signin.dart';
 import 'package:flutter_application_1/view/screen/Homepage.dart';
 
 import 'package:flutter_application_1/view/screen/signup1.dart';
+import 'package:flutter_application_1/view/screenowner/signinOwner.dart';
 
 import 'Auth.dart';
 
@@ -18,8 +19,9 @@ void main() async {
     routes: {
       'Auth': (context) => Auth(),
       'HomeScreen': (context) => Homepage(),
-      'SignupScreen': (context) => const Signup1(),
-      'LoginScreen': (context) => const Signin(),
+      'SignupScreen': (context) => SignupPage(),
+      'Signin': (context) => const Signin(),
+      'LoginScreenOwner': (context) => const SigninOwner(),
     },
   ));
 }

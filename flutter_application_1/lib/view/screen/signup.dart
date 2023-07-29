@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/view/screen/homepage.dart';
 import 'package:flutter_application_1/view/screen/signin.dart';
 import 'package:flutter_application_1/view/screen/signup1.dart';
+import 'package:flutter_application_1/view/screenowner/signinOwner.dart';
+
+import '../screenowner/catogryowner.dart';
 
 class Signup extends StatelessWidget {
   Signup({Key? key}) : super(key: key);
@@ -13,11 +17,11 @@ class Signup extends StatelessWidget {
           toolbarHeight: 70,
           titleSpacing: 38,
           titleTextStyle: TextStyle(height: 2),
-          leading: Icon(
-            Icons.chevron_left_rounded,
-            color: Color.fromARGB(255, 235, 201, 26),
-            size: 30,
-          ),
+          // leading: Icon(
+          //   Icons.chevron_left_rounded,
+          //   color: Color.fromARGB(255, 235, 201, 26),
+          //   size: 30,
+          // ),
           title: Align(
             alignment: Alignment.bottomRight,
             child: Text(
@@ -52,7 +56,7 @@ class Signup extends StatelessWidget {
                   onPressed: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => Signin(),
+                        builder: (context) => SigninOwner(),
                       ),
                     );
                   },
@@ -84,7 +88,7 @@ class Signup extends StatelessWidget {
                   onPressed: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => Signup1(),
+                        builder: (context) => Homepage(),
                       ),
                     );
                   },

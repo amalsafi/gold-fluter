@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/view/screen/Profilepersonly.dart';
-import 'package:flutter_application_1/view/screen/profileperson.dart';
+import 'package:flutter_application_1/view/screen/catogry.dart';
+import 'package:flutter_application_1/view/screen/updateProfileperson.dart';
 
 import 'package:flutter_application_1/view/screen/signin.dart';
+import 'package:flutter_application_1/view/screen/signup.dart';
 
 class Auth extends StatelessWidget {
   const Auth({Key? key}) : super(key: key);
@@ -15,9 +17,9 @@ class Auth extends StatelessWidget {
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return Profilepersonly();
+          return catogry();
         } else {
-          return Signin();
+          return Signup();
         }
       },
     ));

@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/view/screen/catogry.dart';
 import 'package:flutter_application_1/view/screen/changepassword.dart';
 import 'package:flutter_application_1/view/screen/forgetpass.dart';
 import 'package:flutter_application_1/view/screen/forgetpassword.dart';
+import 'package:flutter_application_1/view/screen/homepage.dart';
 import 'package:get/get.dart';
 
 import 'Profilepersonly.dart';
@@ -16,34 +18,42 @@ class Signin extends StatefulWidget {
   State<Signin> createState() => _SigninState();
 }
 
-// Future signin() async {
-//   await FirebaseAuth.instance.signInWithEmailAndPassword(
-//       email: _emailController.text.trim(),
-//       password: _passController.text.trim());
-// }
-
-// void _trySubmitForm() {
-//   final bool? isValid = formstate.currentState?.validate();
-//   if (isValid == true) {
-//     debugPrint('Everything looks good!');
-//     debugPrint(_Name);
-
-//     debugPrint(_password);
-//   }
-// }
-
-// @override
-// void dispose() {
-//   _emailController.dispose();
-//   _passController.dispose();
-//   super.dispose();
-// }
-
 class _SigninState extends State<Signin> {
-  Future signin() async {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passController.text.trim());
+  Future<void> signin() async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passController.text.trim());
+
+      // التسجيل بنجاح، انتقل إلى الصفحة التالية
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              catogry(), // استبدل NextPage() بالصفحة التالية التي تريد عرضها
+        ),
+      );
+    } catch (e) {
+      // حدث خطأ أثناء التسجيل، عرض showDialog يحتوي على رسالة الخطأ
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('خطأ في عملية التسجيل'),
+            content: Text(
+                'يرجى التأكد من البريد الإلكتروني وكلمة المرور والمحاولة مرة أخرى.'),
+            actions: [
+              TextButton(
+                child: Text('حسنا'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   void _trySubmitForm() {
@@ -75,8 +85,6 @@ class _SigninState extends State<Signin> {
     Navigator.of(context).pushReplacementNamed('SignupScreen');
   }
 
-// final _emailController = TextEditingController();
-// final _passController = TextEditingController();
   final formstate = GlobalKey<FormState>();
 
   @override
@@ -88,17 +96,16 @@ class _SigninState extends State<Signin> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-        // resizeToAvoidBottomInset: false,
         backgroundColor: Colors.white,
         appBar: AppBar(
           toolbarHeight: 70,
           titleSpacing: 38,
           titleTextStyle: TextStyle(height: 2),
-          leading: Icon(
-            Icons.chevron_left_rounded,
-            color: Color.fromARGB(255, 235, 201, 26),
-            size: 30,
-          ),
+          // leading: Icon(
+          //   Icons.chevron_left_rounded,
+          //   color: Color.fromARGB(255, 235, 201, 26),
+          //   size: 30,
+          // ),
           title: Align(
             alignment: Alignment.bottomRight,
             child: Text(
@@ -158,7 +165,7 @@ class _SigninState extends State<Signin> {
                       validator: (value) {
                         if (value == null ||
                             value.trim().isEmpty ||
-                            !RegExp(r'^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$')
+                            !RegExp(r'^(?=.*?[a-z])(?=.*?[!@#\$&*~]).{8,}$')
                                 .hasMatch(value)) {
                           return 'املئ الايميل ';
                         }
@@ -166,13 +173,6 @@ class _SigninState extends State<Signin> {
                         return null;
                       },
                       onChanged: (value) => _email = value,
-                      // onChanged: (value) => {
-                      //       setState(
-                      //         () {
-                      //           value = _Email;
-                      //         },
-                      //       )
-                      //     }
                     ),
                   ),
                   SizedBox(
@@ -217,16 +217,15 @@ class _SigninState extends State<Signin> {
                               borderSide: BorderSide(
                                 color: Color.fromARGB(255, 241, 213, 74),
                               ))),
-                      validator: (value) {
-                        if (value == null ||
-                            value.trim().isEmpty ||
-                            !RegExp(r'^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$')
-                                .hasMatch(value)) {
-                          return 'يجب ان تتكون 8خانات على الاقل من رقم و حرف كبير وحرف صغير ورموز';
-                        }
+                      // validator: (value) {
+                      //   if (value == null ||
+                      //       value.trim().isEmpty ||
+                      //       !RegExp(r'^(?=.*?[0-9]).{8,}$').hasMatch(value)) {
+                      //     return 'يجب ان تتكون 8خانات على الاقل من رقم و حرف كبير وحرف صغير ورموز';
+                      //   }
 
-                        return null;
-                      },
+                      //   return null;
+                      // },
                       onChanged: (value) => _password = value,
                     ),
                   ),
@@ -244,7 +243,7 @@ class _SigninState extends State<Signin> {
                         GestureDetector(
                           onTap: openSignUpScreen,
                           child: Text(
-                            ' Sign up  ',
+                            ' تسجيل الاشتراك ',
                             style: TextStyle(
                               fontSize: 15,
                               color: Color.fromARGB(255, 241, 213, 74),
@@ -256,6 +255,7 @@ class _SigninState extends State<Signin> {
                     ),
                   ),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       GestureDetector(
                         onTap: () {
@@ -288,15 +288,6 @@ class _SigninState extends State<Signin> {
                           backgroundColor: Color.fromARGB(255, 241, 213, 74),
                           shape: StadiumBorder()),
                       onPressed: signin,
-                      //  () {
-                      //   if (formstate.currentState!.validate()) {
-                      //     Navigator.of(context).push(
-                      //       MaterialPageRoute(
-                      //         builder: (_) => Profilepersonly(),
-                      //       ),
-                      //     );
-                      //   }
-                      // },
                       child: Center(
                           child: Text(
                         'تسجيل الدخول',
