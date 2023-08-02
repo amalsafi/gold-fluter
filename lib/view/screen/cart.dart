@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/view/screen/cart_item.dart';
+import 'package:flutter_application_1/view/screen/paypal.dart';
 import 'package:provider/provider.dart';
-
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 class CartPage extends StatefulWidget {
   
   final List<CartItem> cartItems;
@@ -62,12 +63,16 @@ class _CartPageState extends State<CartPage> {
                         fontSize: 15,
                         fontWeight: FontWeight.bold)),
         onPressed: () {
-          _showPaymentOptionsDialog(context);
+         Navigator.pushReplacement(
+                       context,
+                       MaterialPageRoute(
+                            builder: (context) => CheckoutPage(),),);  
         },
       ),
     );
   }
-
+}
+/*
 void _showPaymentOptionsDialog(BuildContext context) {
   
     showDialog(
@@ -171,5 +176,5 @@ enum PaymentOption {
   creditCard,
   payPal,
 }
-
 PaymentOption? _selectedPaymentOption;
+ */

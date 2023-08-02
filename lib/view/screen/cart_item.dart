@@ -82,6 +82,63 @@ class CartItemWidget extends StatelessWidget {
         leading: Image.network(imageUrl, width: 50, height: 50),
         title: Text(name),
         subtitle: Text('السعر: $price'),
+        trailing: IconButton(
+        icon: Icon(Icons.delete),
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text('حذف',
+                style: TextStyle(
+                color: Color.fromARGB(255, 218, 180, 28),
+              ),),
+                content: Text('هل أنت متأكد/ة من رغبتك في حذف هذه القطعة؟'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('إلغاء',
+                    style: TextStyle(
+                color: Colors.black,
+              ),),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      onRemove();
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('تأكيد',
+                    style: TextStyle(
+                color: Color.fromARGB(255, 218, 180, 28),
+              ),),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+      ),
+    ),
+    );
+  }
+}
+
+
+
+
+
+
+
+
+ /* @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        leading: Image.network(imageUrl, width: 50, height: 50),
+        title: Text(name),
+        subtitle: Text('السعر: $price'),
         trailing: ElevatedButton(
            style: ElevatedButton.styleFrom(
           backgroundColor: Color.fromARGB(255, 241, 213, 74), 
@@ -92,5 +149,4 @@ class CartItemWidget extends StatelessWidget {
         ),
       ),
     );
-  }
-}
+  } */
