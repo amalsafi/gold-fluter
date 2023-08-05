@@ -326,11 +326,12 @@ class catogryowner extends StatelessWidget {
         ],
       ),
       body: GridView.builder(
+        padding: EdgeInsets.only(top: 80.0),
         // Adjust the number of columns based on the device width and orientation.
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           crossAxisSpacing: 10.0,
-          mainAxisSpacing: 10.0,
+          mainAxisSpacing: 40.0,
         ),
         itemCount: imageUrls.length,
         itemBuilder: (context, index) {

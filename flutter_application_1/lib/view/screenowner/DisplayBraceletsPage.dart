@@ -132,14 +132,14 @@ class BraceletItem extends StatelessWidget {
               if (imageUrl != null)
                 Image.network(
                   imageUrl!,
-                  width: 100,
+                  width: 90,
                   height: 100,
                   fit: BoxFit.cover,
                 ),
-              SizedBox(height: 8),
+              SizedBox(height: 5),
               Text(
                 name,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
               ),
             ],
           ),

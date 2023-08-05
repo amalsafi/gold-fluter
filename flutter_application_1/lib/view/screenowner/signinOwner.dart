@@ -502,7 +502,7 @@ class _SigninOwnerState extends State<SigninOwner> {
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => PasswordResetPage(),
+                        builder: (context) => ForgotPasswordScreen(),
                       ),
                     );
                   },
