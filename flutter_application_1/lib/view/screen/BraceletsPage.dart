@@ -3,6 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_application_1/view/screenowner/AddBraceletsPage.dart';
 import 'package:flutter_application_1/view/screenowner/AddEarringPage.dart';
 import 'package:flutter_application_1/view/screenowner/AddSanasilPage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_application_1/view/screen/cart_item.dart';
 
 class BraceletsPage extends StatelessWidget {
   @override
@@ -219,7 +222,24 @@ class ProductDetailsPage extends StatelessWidget {
                       elevation: 3,
                       backgroundColor: Color.fromARGB(255, 241, 213, 74),
                       shape: StadiumBorder()),
-                  onPressed: () {},
+                  onPressed: () {
+                    CartItem cartItem = CartItem(
+                      name: name,
+                      imageUrl: imageUrl ?? '',
+                      price: price,
+                    );
+                    Provider.of<CartProvider>(context, listen: false)
+                        .addToCart(cartItem);
+                    Fluttertoast.showToast(
+                      msg: 'تمت الإضافة إلى السلة بنجاح!',
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.grey[600],
+                      textColor: Colors.white,
+                      fontSize: 16.0,
+                    );
+                  },
                   child: Center(
                       child: Text(
                     ' اضافة الى السلة',

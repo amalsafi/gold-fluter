@@ -1,74 +1,103 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class Forgetpasss extends StatefulWidget {
+class ForgotPasswordScreen extends StatefulWidget {
   @override
-  _ForgetpasssState createState() => _ForgetpasssState();
+  _ForgotPasswordScreenState createState() => _ForgotPasswordScreenState();
 }
 
-class _ForgetpasssState extends State<Forgetpasss> {
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final TextEditingController _emailController = TextEditingController();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  String _errorMessage = '';
 
-  void _resetPassword() async {
-    final email = _emailController.text.trim();
-
-    try {
-      await _auth.sendPasswordResetEmail(email: email);
-      // تم إرسال رابط إعادة تعيين كلمة المرور بنجاح
-      _showDialog('تمت العملية بنجاح',
-          'تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني.');
-    } catch (e) {
-      // حدث خطأ أثناء إرسال البريد الإلكتروني
-      _showDialog('حدث خطأ', 'حدث خطأ أثناء إرسال البريد الإلكتروني.');
+  void _sendVerificationCode() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        await FirebaseAuth.instance.sendPasswordResetEmail(
+          email: _emailController.text,
+        );
+        _showSuccessDialog();
+      } catch (e) {
+        setState(() {
+          _errorMessage = 'حدث خطأ أثناء إرسال رابط إعادة تعيين كلمة المرور';
+        });
+      }
     }
   }
 
-  void _showDialog(String title, String message) {
+  void _showSuccessDialog() {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // إغلاق الحوار
-              },
-              child: Text('موافق'),
-            ),
-          ],
-        );
-      },
+      builder: (ctx) => AlertDialog(
+        title: Text('تم إرسال البريد الإلكتروني'),
+        content:
+            Text('تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني.'),
+        actions: <Widget>[
+          TextButton(
+            child: Text('حسناً'),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              // يمكنك تنفيذ أي إجراءات إضافية هنا
+            },
+          ),
+        ],
+      ),
     );
+  }
+
+  void _resetPassword() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        await FirebaseAuth.instance.sendPasswordResetEmail(
+          email: _emailController.text,
+        );
+        _sendVerificationCode();
+      } catch (e) {
+        setState(() {
+          _errorMessage = 'حدث خطأ أثناء إرسال رابط إعادة تعيين كلمة المرور';
+        });
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('إعادة تعيين كلمة المرور'),
+        title: Text('نسيت كلمة المرور'),
       ),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  labelText: 'البريد الإلكتروني',
+          padding: EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                TextFormField(
+                  controller: _emailController,
+                  decoration: InputDecoration(labelText: 'البريد الإلكتروني'),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'يرجى إدخال البريد الإلكتروني';
+                    }
+                    // يمكنك أيضًا إضافة تحقق صحة بريد إلكتروني هنا
+                    return null;
+                  },
                 ),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _resetPassword,
-                child: Text('إرسال رابط إعادة تعيين كلمة المرور'),
-              ),
-            ],
+                SizedBox(height: 10),
+                Text(
+                  _errorMessage,
+                  style: TextStyle(color: Colors.red),
+                ),
+                SizedBox(height: 10),
+                ElevatedButton(
+                  child: Text('إرسال'),
+                  onPressed: _sendVerificationCode,
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -119,6 +119,10 @@
 // // }
 
 import 'package:flutter/material.dart';
+
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_application_1/view/screenowner/AddRingPage.dart';
 
@@ -262,7 +266,7 @@ class RingItem extends StatelessWidget {
   }
 }
 
-class ProductDetailsPage extends StatelessWidget {
+class ProductDetailsPage extends StatefulWidget {
   final String? imageUrl;
   final String name;
 
@@ -277,6 +281,14 @@ class ProductDetailsPage extends StatelessWidget {
     required this.weight,
     required this.carat,
   });
+
+  @override
+  State<ProductDetailsPage> createState() => _ProductDetailsPageState();
+}
+
+class _ProductDetailsPageState extends State<ProductDetailsPage> {
+  double goldPrice21InDinar = 0.0;
+
   void showDeleteConfirmationDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -317,7 +329,7 @@ class ProductDetailsPage extends StatelessWidget {
   void deleteProduct(BuildContext context) {
     FirebaseFirestore.instance
         .collection('rings')
-        .where('name', isEqualTo: name)
+        .where('name', isEqualTo: widget.name)
         .get()
         .then(
       (querySnapshot) {
@@ -333,6 +345,12 @@ class ProductDetailsPage extends StatelessWidget {
       // معالجة أي أخطاء في حالة عدم تمكن من حذف المنتج
       print("Error deleting product: $error");
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchGoldPrice21();
   }
 
   @override
@@ -373,26 +391,26 @@ class ProductDetailsPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              if (imageUrl != null)
-                Image.network(imageUrl!, width: 200, height: 200),
+              if (widget.imageUrl != null)
+                Image.network(widget.imageUrl!, width: 200, height: 200),
               SizedBox(height: 16),
               Text(
-                name,
+                widget.name,
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 16),
               Text(
-                'السعر: $price', // عرض السعر هنا
+                'السعر: ${(goldPrice21InDinar + widget.price) * widget.weight} دينار',
                 style: TextStyle(fontSize: 18),
               ),
               SizedBox(height: 8),
               Text(
-                'الوزن: $weight', // عرض الوزن هنا
+                'الوزن: ${widget.weight}', // عرض الوزن هنا
                 style: TextStyle(fontSize: 18),
               ),
               SizedBox(height: 8),
               Text(
-                'العيار: $carat', // عرض العيار هنا
+                'العيار: ${widget.carat}', // عرض العيار هنا
                 style: TextStyle(fontSize: 18),
               ),
               SizedBox(height: 24),
@@ -422,5 +440,64 @@ class ProductDetailsPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  fetchGoldPrice21() async {
+    final apiKey = '4ed47940bd39b5f496abd1bfa1fb37cf';
+    final apiUrl = 'https://api.metalpriceapi.com';
+    final symbol = "XAU";
+    final currency = "USD";
+    final endpointUrl =
+        '$apiUrl/v1/latest?api_key=$apiKey&base=$currency&currencies=$symbol';
+
+    try {
+      final response = await http.get(Uri.parse(endpointUrl));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        double exchangeRate = await getExchangeRate();
+        double goldPricePerOunce =
+            1 / double.parse(data['rates']['XAU'].toString());
+        double goldPricePerGram = goldPricePerOunce / 31.1035;
+        double goldPrice21 = goldPricePerGram * 0.875; // عيار 21
+        double goldPrice21InDinar = goldPrice21 * exchangeRate;
+
+        // تحويل الرقم إلى نص وتقليصه إلى 4 أرقام بعد الفاصلة العشرية
+        String formattedPrice = goldPrice21InDinar.toStringAsFixed(2);
+
+        setState(() {
+          this.goldPrice21InDinar = double.parse(formattedPrice);
+        });
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('خطأ'),
+              content: Text('حدث خطأ أثناء جلب سعر الجرام عيار 21.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('حسنًا'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  Future<double> getExchangeRate() async {
+    final exchangeRateEndpoint =
+        'https://api.exchangerate-api.com/v4/latest/USD';
+    final response = await http.get(Uri.parse(exchangeRateEndpoint));
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return data['rates']['JOD']; // الدينار الأردني
+    } else {
+      throw Exception('Failed to fetch exchange rate');
+    }
   }
 }

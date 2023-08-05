@@ -233,7 +233,7 @@ class _SigninState extends State<Signin> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => Forgetpasss(),
+                          builder: (context) => PasswordResetPage(),
                         ),
                       );
                     },
@@ -262,7 +262,7 @@ class _SigninState extends State<Signin> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ForgotPasswordScreen()),
+                                builder: (context) => PasswordResetPage()),
                           );
                         },
                         child: Text(

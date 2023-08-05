@@ -505,10 +505,23 @@ class _SignupPageState extends State<SignupPage> {
     Navigator.pop(context);
   }
 
+  Future<bool> fetchUserByEmail(String email) async {
+    try {
+      final usersSnapshot = await FirebaseFirestore.instance
+          .collection('Customers')
+          .where('email', isEqualTo: email)
+          .get();
+
+      return usersSnapshot.docs.isNotEmpty;
+    } catch (e) {
+      print('Error fetching user by email: $e');
+      return false;
+    }
+  }
+
   void _signUp() async {
     try {
       if (_passwordController.text != _confirmPasswordController.text) {
-        // عندما تكون كلمة المرور وتأكيد كلمة المرور غير متطابقين
         showDialog(
           context: context,
           builder: (context) {
@@ -527,46 +540,69 @@ class _SignupPageState extends State<SignupPage> {
           },
         );
       } else {
-        UserCredential userCredential =
-            await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: _emailController.text,
-          password: _passwordController.text,
-        );
+        // التحقق مما إذا كان البريد الإلكتروني مسجل مسبقًا
+        var methods = await FirebaseAuth.instance
+            .fetchSignInMethodsForEmail(_emailController.text);
+        if (methods.isNotEmpty) {
+          // البريد الإلكتروني مسجل مسبقًا، قم بإظهار showDialog
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text('خطأ'),
+                content: Text(
+                    'البريد الإلكتروني مسجل مسبقًا، يرجى استخدام بريد إلكتروني آخر.'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('حسناً'),
+                  ),
+                ],
+              );
+            },
+          );
+        } else {
+          // البريد الإلكتروني غير مسجل مسبقًا، قم بإكمال عملية التسجيل
+          UserCredential userCredential =
+              await FirebaseAuth.instance.createUserWithEmailAndPassword(
+            email: _emailController.text,
+            password: _passwordController.text,
+          );
 
-        // حفظ بقية المعلومات في قاعدة البيانات
-        String userId = userCredential.user!.uid;
+          // حفظ بقية المعلومات في قاعدة البيانات
+          String userId = userCredential.user!.uid;
 
-        FirebaseFirestore.instance.collection('Customers').doc(userId).set({
-          'username': _usernameController.text,
-          'idNumber': _idNumberController.text,
-          'phoneNumber': _phoneNumberController.text,
-          'email': _emailController.text,
-          'address': _addressController.text,
-        });
+          FirebaseFirestore.instance.collection('Customers').doc(userId).set({
+            'username': _usernameController.text,
+            'idNumber': _idNumberController.text,
+            'phoneNumber': _phoneNumberController.text,
+            'email': _emailController.text,
+            'address': _addressController.text,
+          });
 
-        // نجاح التسجيل
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text('نجاح'),
-              content: Text('تم تسجيل الاشتراك بنجاح.'),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('حسناً'),
-                ),
-              ],
-            );
-          },
-        );
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text('نجاح'),
+                content: Text('تم تسجيل الاشتراك بنجاح.'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('حسناً'),
+                  ),
+                ],
+              );
+            },
+          );
+        }
       }
     } catch (e) {
-      print(e);
-      // حدث خطأ أثناء التسجيل
       showDialog(
         context: context,
         builder: (context) {

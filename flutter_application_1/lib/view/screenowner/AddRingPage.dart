@@ -380,7 +380,7 @@ class _AddRingPageState extends State<AddRingPage> {
                 child: TextFormField(
                   controller: priceController,
                   decoration: InputDecoration(
-                    labelText: 'السعر',
+                    labelText: 'المصنوعية',
                     labelStyle: TextStyle(
                       fontSize: 18,
                       color: Color.fromARGB(255, 235, 201, 26),

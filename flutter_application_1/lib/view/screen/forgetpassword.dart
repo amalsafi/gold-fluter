@@ -140,12 +140,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class ForgotPasswordScreen extends StatefulWidget {
+class ForgotPasswordScreen1 extends StatefulWidget {
   @override
-  _ForgotPasswordScreenState createState() => _ForgotPasswordScreenState();
+  _ForgotPasswordScreen1State createState() => _ForgotPasswordScreen1State();
 }
 
-class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+class _ForgotPasswordScreen1State extends State<ForgotPasswordScreen1> {
   final TextEditingController _emailController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String _errorMessage = '';

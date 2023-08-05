@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_application_1/view/screenowner/AddSanasilPage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_application_1/view/screen/cart_item.dart';
 
-class SanasilPage extends StatelessWidget {
+class SanasilPage extends StatefulWidget {
+  @override
+  State<SanasilPage> createState() => _SanasilPageState();
+}
+
+class _SanasilPageState extends State<SanasilPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,24 +48,26 @@ class SanasilPage extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               final Sanasils = snapshot.data!.docs;
-              return GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // Set the number of columns in the grid
-                  crossAxisSpacing: 8.0,
-                  mainAxisSpacing: 8.0,
+              return GestureDetector(
+                child: GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2, // Set the number of columns in the grid
+                    crossAxisSpacing: 8.0,
+                    mainAxisSpacing: 8.0,
+                  ),
+                  itemCount: Sanasils.length,
+                  itemBuilder: (context, index) {
+                    final Sanasil =
+                        Sanasils[index].data() as Map<String, dynamic>;
+                    return SanasilItem(
+                      imageUrl: Sanasil['imageUrl'] as String?,
+                      name: Sanasil['name'] as String,
+                      price: Sanasil['price'] as double,
+                      weight: Sanasil['weight'] as double,
+                      carat: Sanasil['carat'] as double,
+                    );
+                  },
                 ),
-                itemCount: Sanasils.length,
-                itemBuilder: (context, index) {
-                  final Sanasil =
-                      Sanasils[index].data() as Map<String, dynamic>;
-                  return SanasilItem(
-                    imageUrl: Sanasil['imageUrl'] as String?,
-                    name: Sanasil['name'] as String,
-                    price: Sanasil['price'] as double,
-                    weight: Sanasil['weight'] as double,
-                    carat: Sanasil['carat'] as double,
-                  );
-                },
               );
             } else if (snapshot.hasError) {
               return Center(
@@ -134,7 +143,6 @@ class SanasilItem extends StatelessWidget {
 class ProductDetailsPage extends StatelessWidget {
   final String? imageUrl;
   final String name;
-
   final double price;
   final double weight;
   final double carat;
@@ -216,7 +224,24 @@ class ProductDetailsPage extends StatelessWidget {
                       elevation: 3,
                       backgroundColor: Color.fromARGB(255, 241, 213, 74),
                       shape: StadiumBorder()),
-                  onPressed: () {},
+                  onPressed: () {
+                    CartItem cartItem = CartItem(
+                      name: name,
+                      imageUrl: imageUrl ?? '',
+                      price: price,
+                    );
+                    Provider.of<CartProvider>(context, listen: false)
+                        .addToCart(cartItem);
+                    Fluttertoast.showToast(
+                      msg: 'تمت الإضافة إلى السلة بنجاح!',
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.grey[600],
+                      textColor: Colors.white,
+                      fontSize: 16.0,
+                    );
+                  },
                   child: Center(
                       child: Text(
                     ' اضافة الى السلة',
