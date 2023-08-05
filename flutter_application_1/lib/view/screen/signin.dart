@@ -6,6 +6,7 @@ import 'package:flutter_application_1/view/screen/changepassword.dart';
 import 'package:flutter_application_1/view/screen/forgetpass.dart';
 import 'package:flutter_application_1/view/screen/forgetpassword.dart';
 import 'package:flutter_application_1/view/screen/homepage.dart';
+import 'package:flutter_application_1/view/screen/signup.dart';
 import 'package:get/get.dart';
 
 import 'Profilepersonly.dart';
@@ -233,7 +234,7 @@ class _SigninState extends State<Signin> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => PasswordResetPage(),
+                          builder: (context) => Signup(),
                         ),
                       );
                     },
@@ -262,7 +263,7 @@ class _SigninState extends State<Signin> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => PasswordResetPage()),
+                                builder: (context) => ForgotPasswordScreen()),
                           );
                         },
                         child: Text(
